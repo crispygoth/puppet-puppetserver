@@ -16,15 +16,18 @@ The puppetserver module allows you to easily manage Puppetserver with Puppet.
 ### Simple usage
 
 ```puppet
-class { 'puppetserver::repository': } ->
-class { 'puppetserver': }
+class { 'puppetserver::repository': }
+-> class { 'puppetserver': }
 ```
 
 ### Tuning configuration parameters
 
 ```puppet
-class { 'puppetserver::repository': } ->
-class { 'puppetserver':
+class { 'puppetserver::repository':
+  apt_repo => 'PC1',
+}
+-> Class['apt::update']
+-> class { 'puppetserver':
   config => {
     'java_args'     => {
       'xms'         => '4g',
@@ -45,6 +48,17 @@ class { 'puppetserver':
 ### puppetserver
 
 The main class to install a Puppet Server.
+
+### puppetserver::repository
+
+Adds the repositories required to install Puppet Server to the system.
+
+Users of APT-based distributions may want to set the `apt_repo` parameter to select which repository they wish to use.
+This defaults to the "puppet" repository to get the latest version, but you may also want to use "PC1" for Puppet 4.x for example.
+
+Be aware that when using this module on an APT based system you will need to include a dependency on `Class['apt::update']` in between the repository class
+and the main puppetserver class, due to a limitation in the `apt` Puppet module.
+
 
 ### puppetserver::hiera::eyaml
 
